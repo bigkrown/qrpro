@@ -64,17 +64,12 @@ function renderNav(){
   const r=document.getElementById('nav-right');
   if(APP.user){
     r.innerHTML=`
-      <button class="btn btn-ghost btn-sm" onclick="go('home')">Home</button>
       <button class="btn btn-ghost btn-sm" onclick="go('generate')">Create</button>
       <button class="btn btn-ghost btn-sm" onclick="go('saved')">My QR Codes</button>
-      <button class="btn btn-ghost btn-sm" onclick="go('about')">About</button>
-      <button class="btn btn-ghost btn-sm btn-icon" title="Settings" onclick="go('settings')" style="font-size:17px">⚙️</button>
-      <div class="avatar">${h(APP.user.name[0].toUpperCase())}</div>
-      <span style="font-size:13px;font-weight:500;color:var(--ink2)">${h(APP.user.name.split(' ')[0])}</span>`;
+      <button class="btn btn-ghost btn-sm btn-icon" title="Settings" onclick="go('settings')" style="font-size:10px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="18" height="18" fill="#000000" style="opacity:1;"><path  d="M3.5 0L3 1.19c-.1.03-.19.08-.28.13L1.53.82l-.72.72l.5 1.19c-.05.1-.09.18-.13.28l-1.19.5v1l1.19.5c.04.1.08.18.13.28l-.5 1.19l.72.72l1.19-.5c.09.04.18.09.28.13l.5 1.19h1L5 6.83c.09-.04.19-.08.28-.13l1.19.5l.72-.72l-.5-1.19c.04-.09.09-.19.13-.28l1.19-.5v-1l-1.19-.5c-.03-.09-.08-.19-.13-.28l.5-1.19l-.72-.72l-1.19.5c-.09-.04-.19-.09-.28-.13L4.5 0zM4 2.5c.83 0 1.5.67 1.5 1.5S4.83 5.5 4 5.5S2.5 4.83 2.5 4S3.17 2.5 4 2.5"/></svg></button>
+      <div class="avatar">${h(APP.user.name[0].toUpperCase())}</div>`;
   } else {
     r.innerHTML=`
-      <button class="btn btn-ghost btn-sm" onclick="go('home')">Home</button>
-      <button class="btn btn-ghost btn-sm" onclick="go('about')">About</button>
       <button class="btn btn-ghost btn-sm" onclick="go('login')">Sign in</button>
       <button class="btn btn-ink btn-sm" onclick="go('register')">Get started</button>`;
   }

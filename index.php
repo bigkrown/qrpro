@@ -26,6 +26,7 @@
       <p>Custom colours, logo branding, beautiful templates, and a personal library — everything for perfect QR codes.</p>
       <div class="hero-btns">
         <button class="btn btn-ink btn-lg" onclick="go('generate')">Start Creating →</button>
+        <button class="btn btn-ink1 btn-lg" onclick="go('about')">About</button>
         <button class="btn btn-ghost btn-lg" onclick="go('register')">Free account</button>
       </div>
     </div>
