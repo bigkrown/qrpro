@@ -292,4 +292,4 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
-Built by [Shola Adewale](https://github.com/sholaadewale)
+Built by [Shola Adewale](https://adesho.la)
