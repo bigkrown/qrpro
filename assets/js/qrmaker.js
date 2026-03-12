@@ -60,17 +60,23 @@ function go(page, noHash) {
   if (page === "generate") updateHint();
 }
 
-function renderNav() {
-  const r = document.getElementById("nav-right");
-  if (APP.user) {
-    r.innerHTML = `
+function renderNav(){
+  const r=document.getElementById('nav-right');
+  if(APP.user){
+    r.innerHTML=`
+      <button class="btn btn-ghost btn-sm" onclick="go('home')">Home</button>
       <button class="btn btn-ghost btn-sm" onclick="go('generate')">Create</button>
       <button class="btn btn-ghost btn-sm" onclick="go('saved')">My QR Codes</button>
+      <button class="btn btn-ghost btn-sm" onclick="go('about')">About</button>
       <button class="btn btn-ghost btn-sm btn-icon" title="Settings" onclick="go('settings')" style="font-size:17px">⚙️</button>
       <div class="avatar">${h(APP.user.name[0].toUpperCase())}</div>
-      <span style="font-size:13px;font-weight:500;color:var(--ink2)">${h(APP.user.name.split(" ")[0])}</span>`;
+      <span style="font-size:13px;font-weight:500;color:var(--ink2)">${h(APP.user.name.split(' ')[0])}</span>`;
   } else {
-    r.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="go('login')">Sign in</button><button class="btn btn-ink btn-sm" onclick="go('register')">Get started</button>`;
+    r.innerHTML=`
+      <button class="btn btn-ghost btn-sm" onclick="go('home')">Home</button>
+      <button class="btn btn-ghost btn-sm" onclick="go('about')">About</button>
+      <button class="btn btn-ghost btn-sm" onclick="go('login')">Sign in</button>
+      <button class="btn btn-ink btn-sm" onclick="go('register')">Get started</button>`;
   }
 }
 

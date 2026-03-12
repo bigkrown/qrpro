@@ -1,30 +1,4 @@
-<?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/includes/user.php';
-$appName = env('APP_NAME','QR Maker Pro');
-$user    = null;
-try { $user = (new User())->current_user(); } catch (Throwable $e) { error_log('QRMaker Pro:'.$e->getMessage()); }
-$userJson = $user ? json_encode(['id'=>$user['id'],'name'=>$user['name'],'email'=>$user['email']]) : 'null';
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title><?= htmlspecialchars($appName) ?> — Beautiful QR Codes</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
-<style>
-
-</style>
-</head>
-<body>
-
-<div class="loader" id="loader"><div class="spinner" style="width:34px;height:34px;border-width:4px"></div></div>
-<div class="toast-wrap" id="toasts"></div>
-<div class="modal-bg hidden" id="modal-bg"><div class="modal" id="modal"></div></div>
-
+<?php require_once(__DIR__.'/layouts/header.php'); ?>
 <!-- Nav -->
 <nav>
   <div class="logo" onclick="go('home')">
@@ -490,27 +464,135 @@ $userJson = $user ? json_encode(['id'=>$user['id'],'name'=>$user['name'],'email'
   </div>
 </div>
 
+
+<!-- ABOUT -->
+<div class="page" id="page-about">
+  <div class="about-wrap">
+
+    <!-- Hero -->
+    <div class="about-hero">
+      <div>
+        <div class="about-section-label">Open Source Project</div>
+        <h1>Generate QR codes<br>that look <em>great</em></h1>
+        <p><?= $appName?>  is a self-hosted QR code platform built with PHP and vanilla JavaScript. Custom colours, logo branding, beautiful templates, and a personal library — all running on a single PHP file with zero database setup.</p>
+        <div class="about-badges">
+          <span class="badge"><span class="badge-dot"></span>PHP 7.4+</span>
+          <span class="badge"><span class="badge-dot"></span>SQLite · Zero Config</span>
+          <span class="badge"><span class="badge-dot"></span>No Framework</span>
+          <span class="badge"><span class="badge-dot"></span>Self-Hosted</span>
+        </div>
+      </div>
+      <div class="about-qr-deco">
+        <svg viewBox="0 0 18 18" width="72" height="72" fill="none">
+          <rect x="1" y="1" width="6" height="6" rx="1.2" fill="white"/>
+          <rect x="10" y="1" width="6" height="6" rx="1.2" fill="white"/>
+          <rect x="1" y="10" width="6" height="6" rx="1.2" fill="white"/>
+          <rect x="11" y="11" width="2.5" height="2.5" rx=".4" fill="#d4500a"/>
+          <rect x="14.5" y="11" width="1.8" height="1.8" rx=".4" fill="white"/>
+          <rect x="11" y="14.5" width="1.8" height="1.8" rx=".4" fill="white"/>
+          <rect x="14" y="14" width="2.2" height="2.2" rx=".4" fill="white"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Overview -->
+    <div class="about-section">
+      <div class="about-section-label">Overview</div>
+      <h2>What is <?= $appName?> ?</h2>
+      <p><?= $appName?>  is a full-stack web application for generating, customising, and exporting branded QR codes. It was built to prove that a useful, polished tool doesn't require heavy dependencies — the entire backend is plain PHP with an SQLite database that creates itself on first run.</p>
+      <p>Drop it onto any shared hosting environment and it works immediately. No Node.js, no Docker, no environment configuration. Registered users get a personal library to save and manage their codes over time, while guests can generate and export freely without signing up.</p>
+    </div>
+
+    <hr class="about-divider">
+
+    <!-- Features -->
+    <div class="about-section">
+      <div class="about-section-label">Features</div>
+      <h2>Everything you need for great QR codes</h2>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon">🎨</div>
+          <h3>Design Controls</h3>
+          <p>6 templates, 8 colour presets, custom FG/BG colour pickers, and adjustable quiet zone padding.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🖼️</div>
+          <h3>Logo Overlay</h3>
+          <p>Upload PNG, SVG, or JPG. Configurable size and background style (white circle, match QR, or transparent).</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📐</div>
+          <h3>Output Resolution</h3>
+          <p>Set output size from 100px to 2000px. Preview scales proportionally. Built for screens and print.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📤</div>
+          <h3>Export Formats</h3>
+          <p>Download as PNG, SVG (vector wrapper), or PDF. Open a full-screen print preview with one click.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🔗</div>
+          <h3>Content Types</h3>
+          <p>URL, email, phone, SMS, WiFi credentials, and freeform text — each with contextual placeholder hints.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📚</div>
+          <h3>Saved Library</h3>
+          <p>Registered users can save, browse, download, and delete their QR codes from a personal library.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">⚡</div>
+          <h3>Live Preview</h3>
+          <p>Debounced 300ms live preview updates as you type. Canvas-based rendering composites logo and padding seamlessly.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🔒</div>
+          <h3>Security</h3>
+          <p>Apache .htaccess blocks dotfiles, hotlinking, path traversal, and SQL injection. Security headers on every response.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="about-divider">
+
+    <!-- Stack -->
+    <div class="about-section">
+      <div class="about-section-label">Technical Stack</div>
+      <h2>Built with simplicity in mind</h2>
+      <p style="margin-bottom:22px">The architecture prioritises portability. The entire backend is standard PHP — no Composer dependencies, no autoloaders. The frontend uses vanilla JS with hash-based SPA routing, so there's no build step.</p>
+      <table class="stack-table">
+        <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+        <tbody>
+          <tr><td>Backend</td><td>PHP 7.4+ (plain PHP, no framework)</td></tr>
+          <tr><td>Database</td><td>SQLite via PDO — auto-created, zero config</td></tr>
+          <tr><td>Frontend</td><td>Vanilla JavaScript — no frameworks or build tools</td></tr>
+          <tr><td>Rendering</td><td>HTML5 Canvas for compositing, preview, and all exports</td></tr>
+          <tr><td>QR Engine</td><td>api.qrserver.com via PHP cURL proxy</td></tr>
+          <tr><td>Auth</td><td>bcrypt passwords + PHP sessions</td></tr>
+          <tr><td>Fonts</td><td>Fraunces (display) + Plus Jakarta Sans via Google Fonts</td></tr>
+          <tr><td>Server Config</td><td>Apache .htaccess — security, hotlink protection, headers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="about-divider">
+
+    <!-- Architecture note -->
+    <div class="about-section">
+      <div class="about-section-label">Architecture</div>
+      <h2>How it works</h2>
+      <p> <?= $appName?> is a single-page app driven by hash-based routing with no page reloads. The PHP layer handles authentication, database access, and acts as a proxy for the external QR API, keeping API calls server-side and avoiding browser CORS issues entirely.</p>
+      <p>Canvas rendering is used throughout for compositing. The live preview, logo overlay, and all export formats — PNG, SVG, PDF, and print — are built from the same <code style="font-size:13px;background:var(--bg);padding:1px 6px;border-radius:4px;font-family:monospace">buildFullCanvas()</code> pipeline, ensuring pixel-perfect consistency between what you see and what you download.</p>
+      <p>User preferences (default template, size, ECC level) are persisted to <code style="font-size:13px;background:var(--bg);padding:1px 6px;border-radius:4px;font-family:monospace">localStorage</code> and applied on load, so returning users get their setup restored immediately without a database round-trip.</p>
+    </div>
+
+  </div>
+</div>
+
 <div id="print-frame" style="display:none;position:fixed;inset:0;z-index:9999;background:#fff;align-items:center;justify-content:center;flex-direction:column;gap:20px">
   <canvas id="print-canvas"></canvas>
   <button onclick="window.print()" style="font-family:var(--fb);font-size:14px;padding:10px 24px;background:var(--ink);color:#fff;border:none;border-radius:var(--r);cursor:pointer" class="no-print">🖨️ Print</button>
   <button onclick="closePrint()" style="font-family:var(--fb);font-size:13px;padding:8px 18px;background:transparent;color:var(--ink2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;margin-top:-8px" class="no-print">Cancel</button>
 </div>
 
-
-<footer style="position:relative;z-index:1;border-top:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-  <span style="font-size:12px;color:var(--ink3)">© <?= date('Y') ?> <?= htmlspecialchars($appName) ?></span>
-  <span style="font-size:12px;color:var(--ink3)">Crafted by <strong style="color:var(--ink2);font-weight:600">Shola Adewale</strong></span>
-</footer>
-<script>
-  /* ── State ── */
-  const APP = {
-  user: <?= $userJson ?>,
-  s: { content:'', size:300, fg:'000000', bg:'ffffff', ecc:'M', tmpl:'classic',
-       logoDataUrl:null, logoSize:20, t:null },
-  prefs: {}
-};
-</script>
-<!-- include JS files -->
-<script src="assets/js/qrmaker.js"></script>
-</body>
-</html>
+<?php require_once(__DIR__.'/layouts/footer.php'); ?>
