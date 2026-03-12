@@ -1,0 +1,144 @@
+# ============================================================
+# Root .htaccess
+# Apache 2.4+  (mod_rewrite, mod_headers, mod_expires required)
+# ============================================================
+
+Options -Indexes -MultiViews
+
+# ── Require mod_rewrite ──────────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ── Block direct access to sensitive files & directories ──
+
+  # .env and any dot-files / dot-directories
+  RewriteRule ^\.env$              - [F,L]
+  RewriteRule (^|/)\.              - [F,L]
+
+  # PHP source under includes/ — must never be served directly
+  RewriteRule ^includes/           - [F,L]
+
+  # storage/ — database and uploads must never be served directly
+  RewriteRule ^storage/            - [F,L]
+
+  # Block common probing patterns
+  RewriteCond %{THE_REQUEST} (\.env|\.git|composer\.|package\.json|\.lock) [NC]
+  RewriteRule .* - [F,L]
+
+  # ── Route everything through index.php (SPA) ────────────────
+  # Allow real files and directories to be served as-is
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  # Allow api/ endpoints to pass through to their own PHP files
+  RewriteCond %{REQUEST_URI} !^/api/
+  RewriteRule ^ index.php [L]
+
+</IfModule>
+
+# ── Deny access to sensitive files by extension / name ──────
+<FilesMatch "^(\.env|\.env\.example|\.gitignore|composer\.json|composer\.lock|package\.json|package-lock\.json|yarn\.lock|README\.md|Makefile|Dockerfile|docker-compose\.yml)$">
+  Require all denied
+</FilesMatch>
+
+# Block PHP in storage (belt-and-braces — storage also has its own .htaccess)
+<FilesMatch "\.php$">
+  <If "%{REQUEST_URI} =~ m{^/storage/}">
+    Require all denied
+  </If>
+</FilesMatch>
+
+# ── Prevent hotlinking ───────────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTP_REFERER} !^$
+  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?localhost [NC]
+  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?%{HTTP_HOST} [NC]
+  # Block hotlinked images / QR codes (png, jpg, svg)
+  RewriteRule \.(png|jpg|jpeg|gif|svg|webp)$ - [F,NC,L]
+</IfModule>
+
+# ── Security headers ─────────────────────────────────────────
+<IfModule mod_headers.c>
+  # Prevent MIME-type sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Clickjacking protection
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Basic XSS protection for older browsers
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Referrer policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Restrict browser features
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+  # Content Security Policy
+  # - Allows same-origin scripts, styles, images
+  # - Allows Google Fonts
+  # - Allows the QR API as an img source (for the proxy)
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none';"
+
+  # Never cache sensitive API responses
+  <FilesMatch "^(api/)">
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, private"
+    Header always set Pragma "no-cache"
+  </FilesMatch>
+
+  # Remove server fingerprint headers
+  Header always unset X-Powered-By
+  Header always unset Server
+</IfModule>
+
+# ── Static asset caching (performance) ───────────────────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # HTML — short cache
+  ExpiresByType text/html                  "access plus 10 minutes"
+  # CSS / JS — cache but re-validate
+  ExpiresByType text/css                   "access plus 1 week"
+  ExpiresByType application/javascript     "access plus 1 week"
+  # Fonts
+  ExpiresByType font/woff2                 "access plus 1 year"
+  ExpiresByType font/woff                  "access plus 1 year"
+  # Do NOT cache API responses
+  <FilesMatch "\.php$">
+    ExpiresActive Off
+  </FilesMatch>
+</IfModule>
+
+# ── Disable ETags (avoid inode fingerprinting) ───────────────
+FileETag None
+<IfModule mod_headers.c>
+  Header unset ETag
+</IfModule>
+
+# ── Charset & MIME ───────────────────────────────────────────
+AddDefaultCharset UTF-8
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType text/css               .css
+  AddType image/svg+xml          .svg
+  AddType font/woff2             .woff2
+</IfModule>
+
+# ── Limit request methods ────────────────────────────────────
+<LimitExcept GET POST HEAD OPTIONS>
+  Require all denied
+</LimitExcept>
+
+# ── Block common attack signatures ───────────────────────────
+<IfModule mod_rewrite.c>
+  # SQL injection fragments
+  RewriteCond %{QUERY_STRING} (union.*select|select.*from|insert.*into|drop.*table) [NC]
+  RewriteRule .* - [F,L]
+
+  # Path traversal
+  RewriteCond %{QUERY_STRING} (\.\./|\.\.\\) [NC]
+  RewriteRule .* - [F,L]
+
+  # Null bytes
+  RewriteCond %{QUERY_STRING} %00 [NC]
+  RewriteRule .* - [F,L]
+</IfModule>
